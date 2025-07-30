@@ -1,3 +1,61 @@
+
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main  # Change to your deployment branch if needed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Node.js 18.17.0
+      - name: Set up Node.js 18.17.0
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.17.0
+
+      # Install Node.js dependencies and build the UI
+      - name: Conditionally run npm build
+        working-directory: ui/litellm-dashboard
+        run: |
+          npm install
+          if npm run | grep -q "build"; then
+            echo "Running build..."
+            npm run build
+          else
+            echo "No build script found. Skipping."
+          fi
+
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.PASSEORD_DOCKER }}" | docker login -u "${{ secrets.USERNAME_DOCKER }}" --password-stdin
+
+      # Build Docker image
+      - name: Build Docker image
+        run: docker build -f ./Dockerfile -t ${{ secrets.USER_NAME_DOCKER }}/llm:latest12 ./ui/litellm-dashboard
+
+      # - name: Build Docker image
+      #   run: |
+      #     docker build -t ${{ secrets.USERNAME_DOCKER }}/llm:latest ./ui/litellm-dashboard  # Ensure build context is inside the UI folder
+
+      # Push Docker image to Docker Hub
+      - name: Push Docker image to Docker Hub
+        run: docker push ${{ secrets.USERNAME_DOCKER }}/llm:latest
+
+
+
+
+
+
+
+
+
 # # name: Build and Deploy to Kubernetes -d
 
 # # on:
@@ -187,51 +245,4 @@
 
 
 
-name: Build and Deploy
-
-on:
-  push:
-    branches:
-      - main  # Change to your deployment branch if needed
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # Set up Node.js 18.17.0
-      - name: Set up Node.js 18.17.0
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18.17.0
-
-      # Install Node.js dependencies and build the UI
-      - name: Conditionally run npm build
-        working-directory: ui/litellm-dashboard
-        run: |
-          npm install
-          if npm run | grep -q "build"; then
-            echo "Running build..."
-            npm run build
-          else
-            echo "No build script found. Skipping."
-          fi
-
-      # Log in to Docker Hub
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.PASSEORD_DOCKER }}" | docker login -u "${{ secrets.USERNAME_DOCKER }}" --password-stdin
-
-      # Build Docker image
-      - name: Build Docker image
-        run: docker build -t ${{ secrets.USERNAME_DOCKER }}/llm:latest12 ./ui/litellm-dashboard
-      # - name: Build Docker image
-      #   run: |
-      #     docker build -t ${{ secrets.USERNAME_DOCKER }}/llm:latest ./ui/litellm-dashboard  # Ensure build context is inside the UI folder
-
-      # Push Docker image to Docker Hub
-      - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.USERNAME_DOCKER }}/llm:latest
 
