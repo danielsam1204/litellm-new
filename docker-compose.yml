@@ -7,7 +7,7 @@ services:
       context: .
       args:
         target: runtime
-      dockerfile: Dockerfile.optimized
+      dockerfile: Dockerfile
     image: iagamiapp:optimized
     ports:
       - "4141:4000"
