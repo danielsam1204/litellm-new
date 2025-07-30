@@ -221,14 +221,14 @@ jobs:
 
       # Log in to Docker Hub
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.PASSWORD_DOCKER }}" | docker login -u "${{ secrets.USER_NAME_DOCKER }}" --password-stdin
+        run: echo "${{ secrets.PASSEORD_DOCKER }}" | docker login -u "${{ secrets.USERNAME_DOCKER }}" --password-stdin
 
       # Build Docker image
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.USER_NAME_DOCKER }}/llm:latest ./ui/litellm-dashboard  # Ensure build context is inside the UI folder
+          docker build -t ${{ secrets.USERNAME_DOCKER }}/llm:latest ./ui/litellm-dashboard  # Ensure build context is inside the UI folder
 
       # Push Docker image to Docker Hub
       - name: Push Docker image to Docker Hub
-        run: docker push ${{ secrets.USER_NAME_DOCKER }}/llm:latest
+        run: docker push ${{ secrets.USERNAME_DOCKER }}/llm:latest
 
