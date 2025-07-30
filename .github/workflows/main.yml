@@ -226,8 +226,10 @@ jobs:
 
       # Build Docker image
       - name: Build Docker image
-        run: |
-          docker build -t ${{ secrets.USERNAME_DOCKER }}/llm:latest ./ui/litellm-dashboard  # Ensure build context is inside the UI folder
+        run: docker build -t ${{ secrets.USER_NAME_DOCKER }}/llm:latest ./ui/litellm-dashboard
+      # - name: Build Docker image
+      #   run: |
+      #     docker build -t ${{ secrets.USERNAME_DOCKER }}/llm:latest ./ui/litellm-dashboard  # Ensure build context is inside the UI folder
 
       # Push Docker image to Docker Hub
       - name: Push Docker image to Docker Hub
