@@ -208,11 +208,16 @@ jobs:
           node-version: 18.17.0
 
       # Install Node.js dependencies and build the UI
-      - name: Install Node.js dependencies and build UI
-        working-directory: ui/litellm-dashboard  # Target the specific directory (litellm-dashboard)
+      - name: Conditionally run npm build
+        working-directory: ui/litellm-dashboard
         run: |
           npm install
-          npm run build  # Assuming the build script is defined in the package.json
+          if npm run | grep -q "build"; then
+            echo "Running build..."
+            npm run build
+          else
+            echo "No build script found. Skipping."
+          fi
 
       # Log in to Docker Hub
       - name: Log in to Docker Hub
